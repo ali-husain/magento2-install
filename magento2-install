@@ -16,8 +16,8 @@ DEFAULT_SSH_KEY_PATH=~/.ssh/id_rsa
 DEFAULT_BASEPATH=$(pwd)
 DEFAULT_EDITION=ce
 DEFAULT_USE_SAMPLE_DATA=y
-DEFAULT_DOCKER_PRODUCTION_WEB_IMAGE=webdevops/php-apache
-DEFAULT_DOCKER_DEVELOPMENT_WEB_IMAGE=${DEFAULT_DOCKER_PRODUCTION_WEB_IMAGE}-dev
+DEFAULT_DOCKER_PRODUCTION_WEB_IMAGE=webdevops/php-apache-dev
+DEFAULT_DOCKER_DEVELOPMENT_WEB_IMAGE=webdevops/php-apache-dev
 DEFAULT_DOCKER_DB_IMAGE=mariadb:10.2
 DEFAULT_DOCKER_REDIS_IMAGE=redis:latest
 DEFAULT_ADMIN_USERNAME=admin
@@ -575,11 +575,11 @@ EOT
           - PHP_POST_MAX_SIZE=500M
           - PHP_UPLOAD_MAX_FILESIZE=1024M
           - PHP_DEBUGGER=xdebug
-          - XDEBUG_REMOTE_CONNECT_BACK=0
-          - XDEBUG_REMOTE_HOST=host.docker.internal
-          - XDEBUG_REMOTE_PORT=9000
-          - php.xdebug.remote_enable=1
-          - php.xdebug.idekey=${IDE_KEY}
+          - XDEBUG_DISCOVER_CLIENT_HOST=0
+          - XDEBUG_CLIENT_HOST=host.docker.internal
+          - XDEBUG_CLIENT_PORT=9000
+          - XDEBUG_MODE=debug
+          - XDEBUG_IDE_KEY=${IDE_KEY}
           - PHP_DISMOD=ioncube
           - COMPOSER_MEMORY_LIMIT=-1
         ports:
@@ -721,7 +721,7 @@ createDockerContainers() {
     docker cp ${SSH_KEY_PATH}.pub ${DOCKER_WEB_CONTAINER_NAME}:/home/application/.ssh/authorized_keys
     docker exec -uroot $DOCKER_WEB_CONTAINER_NAME /bin/bash -c "chmod 600 /home/application/.ssh/authorized_keys"
     docker exec -uroot $DOCKER_WEB_CONTAINER_NAME /bin/bash -c "chown -R application:application /home/application/.ssh/"
-    docker exec -uroot $DOCKER_WEB_CONTAINER_NAME /bin/bash -c "composer self-update 1.10.13"
+    docker exec -uroot $DOCKER_WEB_CONTAINER_NAME /bin/bash -c "composer self-update --2"
     docker exec $DOCKER_WEB_CONTAINER_NAME /bin/bash -c "cd /app && composer update"
 
     if [[ "$USE_SAMPLE_DATA" == 1 ]]; then
@@ -855,7 +855,7 @@ handleSuccess() {
     fi
 
     printf "${GREEN}${BOLD}Xdebug${NORMAL}${RESET} \n"
-    printf "${BOLD}Port:${NORMAL} 9000 \n"
+    printf "${BOLD}Port:${NORMAL} 9003 \n"
     printf "${BOLD}IDE Key:${NORMAL} ${IDE_KEY} \n"
     printf "\n"
     printf "${GREEN}${BOLD}Usage Instructions${NORMAL}${RESET} \n"
@@ -933,7 +933,7 @@ createDockerComposeFile
 createDockerContainers || handleError
 installMagento || handleError
 warmCaches
-replaceProductionWebImageWithDevelopmentWebImage
+#replaceProductionWebImageWithDevelopmentWebImage
 handleSuccess
 displayAttribution
 exit
