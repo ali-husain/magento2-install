@@ -575,12 +575,14 @@ EOT
           - PHP_POST_MAX_SIZE=500M
           - PHP_UPLOAD_MAX_FILESIZE=1024M
           - PHP_DEBUGGER=xdebug
-          - XDEBUG_DISCOVER_CLIENT_HOST=0
-          - XDEBUG_MODE=develop,debug
+          - XDEBUG_DISCOVER_CLIENT_HOST=1
+          - XDEBUG_MODE=develop,debug,trace
           - XDEBUG_START_WITH_REQUEST=yes
           - XDEBUG_REMOTE_CONNECT_BACK=0
           - XDEBUG_REMOTE_HOST=host.docker.internal
+          - XDEBUG_CLIENT_HOST=host.docker.internal
           - XDEBUG_REMOTE_PORT=9003
+          - XDEBUG_START_WITH_REQUEST=true
           - COMPOSER_MEMORY_LIMIT=-1
         ports:
           - "${WEB_PORT}:443"
