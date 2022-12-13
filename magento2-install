@@ -583,6 +583,7 @@ EOT
           - XDEBUG_CLIENT_HOST=host.docker.internal
           - XDEBUG_REMOTE_PORT=9003
           - XDEBUG_START_WITH_REQUEST=true
+          - XDEBUG_IDE_KEY=${IDE_KEY}
           - COMPOSER_MEMORY_LIMIT=-1
         ports:
           - "${WEB_PORT}:443"
